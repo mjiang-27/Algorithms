@@ -4,6 +4,7 @@
 typedef struct
 {
     int mKey;
+    // Value should be usd to store the count for the key
     int mValue;
 } HashNode;
 
@@ -175,9 +176,15 @@ void twoSum(int* nums, int lIndex, int rIndex, int target, int **result, int *re
     for (; index <= rIndex; index++)
     {
         // Skip the duplicates
-        while (nums[index] == nums[index + 1])
+        while (nums[index] == nums[index + 1] && nums[index] + nums[index + 1] != target)
         {
             index++;
+        }
+
+        HashNode * tempNode = hashMapGetByKey(hashMap, nums[index]);
+        if (tempNode != NULL && tempNode->mValue >= 2)
+        {
+            continue;
         }
 
         diff = target - nums[index];
@@ -193,9 +200,15 @@ void twoSum(int* nums, int lIndex, int rIndex, int target, int **result, int *re
             result[*resultCount] = resElem;
             (*resultCount)++;
         }
-        
-        hashMapSet(hashMap, nums[index], index);
 
+        if (tempNode == NULL)
+        {
+            hashMapSet(hashMap, nums[index], 1);
+        }
+        else
+        {
+            tempNode->mValue++;
+        }
     }
 
     // Destroy the HashMap
@@ -215,7 +228,7 @@ int** threeSum(int* nums, int numsSize, int* returnSize) {
     QuickSort(nums, numsSize, 0, numsSize - 1);
 
     // Mallcate for result
-    int maxSize = numsSize * (numsSize - 1) * (numsSize - 2) / 6;
+    int maxSize = 4048;
     int** result = (int**)calloc(maxSize, sizeof(int*));
 
     // Traverse the sorted array and get array of result with 2 sum algorithm
